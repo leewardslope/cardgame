@@ -3,45 +3,61 @@ import React from 'react';
 import { useFormik } from 'formik';
 import { useHistory } from 'react-router-dom';
 
-import { traditionalSignUp } from '../../../../context/authContext';
+import { traditionalSignUp, updateDisplayName } from '../../../../context/authContext';
 import signUpValidationSchema from '../../validations/signUpValidationSchema';
 
 const SignUpForm = () => {
   const history = useHistory();
   const formik = useFormik({
     initialValues: {
+      name: '',
       email: '',
       password: '',
-      passwordConfirmation: '',
+      passwordConfirmation: ''
     },
     validationSchema: signUpValidationSchema,
     onSubmit: async (values) => {
       const createUserData = {
+        displayName: values.name,
         email: values.email,
-        password: values.password,
+        password: values.password
       };
 
       try {
-        await traditionalSignUp(createUserData.email, createUserData.password).then(() =>
-          history.push('/'),
-        );
+        await traditionalSignUp(createUserData.email, createUserData.password);
+
+        await updateDisplayName(createUserData.displayName);
+        await history.push('/');
       } catch (error) {
         console.error(error);
       }
-    },
+    }
   });
   return (
     <form onSubmit={formik.handleSubmit}>
-      <Box width='50%' display='flex'>
+      <Box width="50%" display="flex">
         <Card>
           <CardContent>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
-                  id='email'
-                  name='email'
-                  label='Email'
-                  variant='outlined'
+                  id="name"
+                  name="name"
+                  label="Name"
+                  variant="outlined"
+                  fullWidth
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  error={formik.touched.name && Boolean(formik.errors.name)}
+                  helperText={formik.touched.name && formik.errors.name}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  id="email"
+                  name="email"
+                  label="Email"
+                  variant="outlined"
                   fullWidth
                   value={formik.values.email}
                   onChange={formik.handleChange}
@@ -52,12 +68,12 @@ const SignUpForm = () => {
 
               <Grid item xs={12}>
                 <TextField
-                  id='password'
-                  name='password'
-                  label='Password'
-                  variant='outlined'
+                  id="password"
+                  name="password"
+                  label="Password"
+                  variant="outlined"
                   fullWidth
-                  type='password'
+                  type="password"
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   error={formik.touched.password && Boolean(formik.errors.password)}
@@ -67,12 +83,12 @@ const SignUpForm = () => {
 
               <Grid item xs={12}>
                 <TextField
-                  id='Confirm Password'
-                  name='passwordConfirmation'
-                  label='Confirm Password'
-                  variant='outlined'
+                  id="Confirm Password"
+                  name="passwordConfirmation"
+                  label="Confirm Password"
+                  variant="outlined"
                   fullWidth
-                  type='password'
+                  type="password"
                   value={formik.values.passwordConfirmation}
                   onChange={formik.handleChange}
                   error={
@@ -86,7 +102,7 @@ const SignUpForm = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <Button color='primary' variant='contained' type='submit'>
+                <Button color="primary" variant="contained" type="submit">
                   Submit
                 </Button>
               </Grid>

@@ -6,6 +6,7 @@ import {
   signOut,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile
 } from 'firebase/auth';
 
 import { auth } from '../firebase';
@@ -23,14 +24,21 @@ export const traditionalSignIn = (email, password) =>
 
 export const signOutUser = () => signOut(auth);
 
+export const updateDisplayName = (name) => {
+  updateProfile(auth.currentUser, {
+    displayName: name
+  });
+};
+
 //  Context API and useContext hook
 export const userAuthContext = createContext();
 
 const UserAuthContextProvider = ({ children }) => {
   const [user, setUser] = useState();
   const [token, setToken] = useState();
+
   const [userAuthenticated, setUserAuthenticated] = useState(
-    false || window.localStorage.getItem('userAuthenticated'),
+    false || window.localStorage.getItem('userAuthenticated')
   );
 
   useEffect(() => {
@@ -38,19 +46,24 @@ const UserAuthContextProvider = ({ children }) => {
       setUser(currentUser);
       if (user) {
         setUserAuthenticated(true);
+        window.localStorage.setItem('userAuthenticated', true);
         user?.getIdToken().then((res) => setToken(res));
       } else {
         setUserAuthenticated(false);
+        window.localStorage.setItem('userAuthenticated', false);
       }
-      window.localStorage.setItem('userAuthenticated', userAuthenticated);
     });
 
+    return unsubscribe;
+  }, [user]);
+
+  useEffect(() => {
     // A small sync request to backend to store a firebase uid and email in mongodb
     if (token) {
       let config = {
         headers: {
-          Authorization: 'Bearer ' + token,
-        },
+          Authorization: 'Bearer ' + token
+        }
       };
 
       (async () => {
@@ -61,9 +74,7 @@ const UserAuthContextProvider = ({ children }) => {
         }
       })();
     }
-
-    return unsubscribe;
-  }, [user, token, userAuthenticated]);
+  }, [token]);
   return (
     <userAuthContext.Provider value={{ user, token, userAuthenticated }}>
       {children}

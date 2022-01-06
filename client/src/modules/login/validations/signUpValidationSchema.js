@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 
 const signUpValidationSchema = yup.object({
+  name: yup.string().required('Name cannot be empty'),
   email: yup.string().email('Enter a valid email').required('Email is required'),
   password: yup
     .string()
@@ -9,7 +10,7 @@ const signUpValidationSchema = yup.object({
   passwordConfirmation: yup
     .string()
     .oneOf([yup.ref('password')], 'Password does not match')
-    .required('Confirm your password'),
+    .required('Confirm your password')
 });
 
 export default signUpValidationSchema;

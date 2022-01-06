@@ -24,29 +24,39 @@ const NavButtons = () => {
       console.error(error);
     }
   };
+
+  const handleSocket = () => {
+    history.push('/socket');
+  };
   return (
     <React.Fragment>
-      <Button onClick={() => history.push('/')} variant='outlined' style={{ margin: 2 }}>
+      <Button onClick={() => history.push('/')} variant="outlined" style={{ margin: 2 }}>
         Home
       </Button>
       {!userAuthenticated && (
-        <Button onClick={() => history.push('/signup')} variant='outlined' style={{ margin: 2 }}>
+        <Button onClick={() => history.push('/signup')} variant="outlined" style={{ margin: 2 }}>
           Sign Up
         </Button>
       )}
       {!userAuthenticated && (
-        <Button onClick={() => history.push('/signin')} variant='outlined' style={{ margin: 2 }}>
+        <Button onClick={() => history.push('/signin')} variant="outlined" style={{ margin: 2 }}>
           Sign In
         </Button>
       )}
 
       {userAuthenticated ? (
-        <Button onClick={handleSignOut} variant='contained' style={{ margin: 2 }}>
+        <Button onClick={handleSignOut} variant="contained" style={{ margin: 2 }}>
           Sign Out
         </Button>
       ) : (
-        <Button onClick={handleGoogleSignIn} variant='contained' style={{ margin: 2 }}>
+        <Button onClick={handleGoogleSignIn} variant="contained" style={{ margin: 2 }}>
           Login With Google
+        </Button>
+      )}
+
+      {userAuthenticated && (
+        <Button onClick={handleSocket} variant="contained" style={{ margin: 2 }}>
+          Socket IO
         </Button>
       )}
     </React.Fragment>
